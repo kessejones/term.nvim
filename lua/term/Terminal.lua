@@ -56,8 +56,6 @@ function Terminal:show()
     if self.started == false then
         self:_spawn()
     end
-
-    vim.cmd("doautocmd Term TermOpen")
 end
 
 function Terminal:hide()

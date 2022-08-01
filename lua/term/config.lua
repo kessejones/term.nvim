@@ -4,7 +4,8 @@ local default_config = {
     shell = vim.o.shell,
     width = 0.5,
     height = 0.5,
-    border = "rounded",
+    -- border = "single",
+    border_chars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
 }
 
 local config = nil
@@ -34,11 +35,35 @@ function M.win_opts()
     local win_opts = {
         relative = "editor",
         style = "minimal",
-        border = opts.border,
         row = row,
         col = col,
         width = width,
         height = height,
+    }
+
+    return win_opts
+end
+
+function M.bg_win_opts()
+    local opts = M.opts()
+
+    local columns = vim.o.columns
+    local lines = vim.o.lines
+
+    local width = math.floor(columns * opts.width)
+    local height = math.floor(lines * opts.height - 4)
+
+    local row = (lines - height) / 2
+    local col = (columns - width) / 2
+
+    local win_opts = {
+        relative = "editor",
+        style = "minimal",
+        row = row,
+        col = col,
+        width = width,
+        height = height,
+        focusable = false,
     }
 
     return win_opts
