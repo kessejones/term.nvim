@@ -10,7 +10,10 @@ local function setup_commands()
 end
 
 local function setup_autocmds()
+    local group = vim.api.nvim_create_augroup("Term", { clear = true })
+
     vim.api.nvim_create_autocmd("TermOpen", {
+        group = group,
         callback = function()
             vim.cmd("startinsert")
         end,
@@ -18,10 +21,12 @@ local function setup_autocmds()
 end
 
 function M.setup(opts)
-    config.init(opts or {})
-
     setup_commands()
     setup_autocmds()
+
+    manager.init()
+
+    config.init(opts or {})
 
     vim.keymap.set({ "n", "t" }, "<C-\\>", function()
         manager.toggle()

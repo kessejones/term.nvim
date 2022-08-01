@@ -4,7 +4,7 @@ local default_config = {
     shell = vim.o.shell,
     width = 0.5,
     height = 0.5,
-    border = "single",
+    border = "rounded",
 }
 
 local config = nil

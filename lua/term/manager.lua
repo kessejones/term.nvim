@@ -1,7 +1,11 @@
 local Terminal = require("term.Terminal")
 local config = require("term.config")
 
-local M = {}
+local M = {
+    bg_bufnr = nil,
+    bg_winid = nil,
+    opened = false,
+}
 
 local terminals = {}
 local current_id = nil
@@ -37,12 +41,29 @@ local function find_prev_terminal(cur)
     return nil
 end
 
+function M.init()
+    -- vim.api.nvim_create_autocmd("TermPreOpen", {
+    --     group = vim.api.nvim_create_augroup("TermCommands", {}),
+    --     callback = function()
+    --         vim.pretty_print("oal")
+    --         M._show_background()
+    --     end,
+    -- })
+
+    -- vim.api.nvim_create_autocmd("TermPreClose", {
+    --     callback = function()
+    --         M._show_background()
+    --     end,
+    -- })
+end
+
 function M.current_terminal()
     return terminals[current_id]
 end
 
 function M.new_terminal()
     local id = get_next_id()
+
     local t = Terminal.new(id, config.opts())
 
     table.insert(terminals, id, t)
@@ -66,16 +87,20 @@ function M.toggle()
         M.set_current(terminal.id)
     end
 
-    terminal:toggle()
+    if terminal.window.opened then
+        M.hide()
+    else
+        M.show()
+    end
 end
 
 function M.next()
     local next_terminal = find_next_terminal(current_id)
     if next_terminal then
-        M.hide()
+        M.current_terminal():hide()
 
         M.set_current(next_terminal.id)
-        M.show()
+        next_terminal:show()
     end
 end
 
@@ -83,21 +108,50 @@ function M.prev()
     local prev_terminal = find_prev_terminal(current_id)
 
     if prev_terminal then
-        M.hide()
+        M.current_terminal():hide()
 
         M.set_current(prev_terminal.id)
-        M.show()
+        prev_terminal:show()
     end
 end
 
 function M.show()
     local cur = M.current_terminal()
-    cur:show()
+    if cur then
+        cur:show()
+    end
 end
 
 function M.hide()
     local cur = M.current_terminal()
-    cur:hide()
+    if cur then
+        cur:hide()
+    end
+end
+
+function M._show_background()
+    -- local bufnr = vim.api.nvim_create_buf(false, false)
+    -- vim.bo[bufnr].buflisted = false
+    --
+    -- local win_opts = config.win_opts()
+    -- win_opts.focusable = false
+    -- -- win_opts.border = "single"
+    --
+    -- M.bg_winid = vim.api.nvim_open_win(bufnr, false, win_opts)
+    -- M.bg_bufnr = bufnr
+    --
+    -- M.set_title()
+    -- M.opened = true
+end
+
+function M._hide_background()
+    -- vim.api.nvim_win_close(M.bg_winid, true)
+    --
+    -- M.opened = false
+end
+
+function M.set_title()
+    -- vim.api.nvim_buf_set_lines(M.bg_bufnr, 0, 1, false, { "Terminal 1/10" })
 end
 
 return M
