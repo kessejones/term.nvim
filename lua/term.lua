@@ -1,39 +1,50 @@
-local manager = require("term.manager")
+local Manager = require("term.Manager")
 local config = require("term.config")
+local colors = require("term.colors")
 
 local M = {}
 
+local manager
+manager = Manager.new()
+
 local function setup_commands()
     vim.api.nvim_create_user_command("TermToggle", function()
-        manager.toggle()
+        manager:toggle()
     end, {})
+end
+
+local function setup_colors()
+    colors.set_hl("Term", { link = "Normal" })
+    colors.set_hl("FloatBorder", { link = "Normal" })
 end
 
 function M.setup(opts)
     config.init(opts or {})
     setup_commands()
-
-    manager.setup()
+    setup_colors()
 
     vim.keymap.set({ "n", "t" }, "<C-\\>", function()
-        manager.toggle()
+        manager:toggle()
     end)
 
     vim.keymap.set({ "t" }, "<C-n>", function()
-        manager.next()
+        manager:next()
     end)
 
     vim.keymap.set({ "t" }, "<C-p>", function()
-        manager.prev()
+        manager:prev()
     end)
 
     vim.keymap.set({ "t" }, "<C-o>", function()
         manager:hide()
 
-        local new_term = manager.new_terminal()
-        manager.set_current(new_term.id)
-        manager:show()
+        local new_term = manager:new_terminal()
+        manager:active(new_term)
     end)
+end
+
+function M.status()
+    return manager:status()
 end
 
 return M
