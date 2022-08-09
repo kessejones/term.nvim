@@ -2,8 +2,13 @@ local Terminal = require("term.Terminal")
 local List = require("term.List")
 local config = require("term.config")
 
+---@class Manager
+---@field terminals List
+---@field current_index number
 local Manager = {}
 
+---create a new manager
+---@return Manager
 function Manager.new()
     local instance = {
         terminals = List.new(),
@@ -15,13 +20,17 @@ function Manager.new()
     return instance
 end
 
+---get current terminal
+---@return Terminal?
 function Manager:current()
     return self.terminals:get(self.current_index)
 end
 
+---create a new terminal
+---@return Terminal
 function Manager:new_terminal()
     local opts = {
-        shell = config.opts().shell,
+        shell = config.config().shell,
         on_exit = function(t)
             t:close()
             self.terminals:remove(t)
@@ -33,14 +42,19 @@ function Manager:new_terminal()
     return terminal
 end
 
+---remove terminal from index
+---@param idx number
 function Manager:remove_terminal(idx)
     self.terminals:delete(idx)
 end
 
+---set terminal index to current
+---@param index number
 function Manager:set_current(index)
     self.current_index = index
 end
 
+---toggle current terminal
 function Manager:toggle()
     local terminal = self:current()
 
@@ -52,6 +66,8 @@ function Manager:toggle()
     terminal:toggle()
 end
 
+---active a terminal
+---@param t Terminal
 function Manager:active(t)
     local index = self.terminals:index_of(t)
 
@@ -59,6 +75,7 @@ function Manager:active(t)
     self:show()
 end
 
+---show next terminal
 function Manager:next()
     local next_term_idx = self.current_index + 1
     if next_term_idx > self.terminals:length() then
@@ -73,6 +90,7 @@ function Manager:next()
     end
 end
 
+---show previous terminal
 function Manager:prev()
     local prev_term_idx = self.current_index - 1
     if prev_term_idx < 0 then
@@ -88,6 +106,7 @@ function Manager:prev()
     end
 end
 
+---show current terminal
 function Manager:show()
     local cur = self:current()
     if cur then
@@ -95,6 +114,7 @@ function Manager:show()
     end
 end
 
+---hide current terminal
 function Manager:hide()
     local cur = self:current()
     if cur then
@@ -102,6 +122,8 @@ function Manager:hide()
     end
 end
 
+---status of all terminals
+---@return table
 function Manager:status()
     return {
         current = (self.current_index or 0) + 1,

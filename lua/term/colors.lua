@@ -41,6 +41,9 @@ local function convert_options(opts)
     return result
 end
 
+---set hightlight
+---@param name string
+---@param opts table
 function M.set_hl(name, opts)
     vim.api.nvim_set_hl(0, name, convert_options(opts))
 end

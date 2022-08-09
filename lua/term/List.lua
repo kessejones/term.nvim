@@ -1,5 +1,16 @@
+---@class Node
+---@field value any
+---@field next? Node
+---@field prev? Node
+
+---@class List
+---@field head Node
+---@field tail Node
+---@field len number
 local List = {}
 
+---create new list
+---@return List
 function List.new()
     local instance = {
         head = nil,
@@ -12,6 +23,8 @@ function List.new()
     return instance
 end
 
+---push value to list
+---@param value any
 function List:push(value)
     local node = {
         value = value,
@@ -30,6 +43,9 @@ function List:push(value)
     self.len = self.len + 1
 end
 
+---remove value
+---@param value any
+---@return boolean
 function List:remove(value)
     local node = self.head
     while node ~= nil do
@@ -58,6 +74,9 @@ function List:remove(value)
     return false
 end
 
+---delete value of index
+---@param index number
+---@return boolean
 function List:delete(index)
     local node = self.head
     local i = 0
@@ -87,6 +106,9 @@ function List:delete(index)
     return false
 end
 
+---get index of value
+---@param value any
+---@return any?
 function List:index_of(value)
     local node = self.head
     local i = 0
@@ -101,6 +123,9 @@ function List:index_of(value)
     return nil
 end
 
+---get value from index
+---@param index number
+---@return any?
 function List:get(index)
     local node = self.head
     local i = 0
@@ -115,6 +140,8 @@ function List:get(index)
     return nil
 end
 
+---length of list
+---@return number
 function List:length()
     return self.len
 end
