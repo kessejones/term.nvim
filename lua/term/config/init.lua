@@ -2,6 +2,7 @@ local Config = require("term.config.Config")
 
 local M = {}
 
+---@type Config
 local config
 
 ---@class WindowConfig

@@ -3,6 +3,8 @@ local config = require("term.config")
 local colors = require("term.colors")
 
 local M = {}
+
+---@type Manager
 local manager
 
 ---setup commands
@@ -49,7 +51,9 @@ end
 
 ---create a new terminal
 function M.new()
-    manager:new_terminal()
+    local t = manager:new_terminal()
+    manager:hide()
+    manager:active(t)
 end
 
 return M
