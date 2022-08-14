@@ -50,11 +50,6 @@ function List:remove(value)
     local node = self.head
     while node ~= nil do
         if node.value == value then
-            if node.prev and node.next then
-                node.prev.next = node.next
-                node.next.prev = node.prev
-            end
-
             if node == self.head then
                 if node.next then
                     self.head = node.next
@@ -62,6 +57,16 @@ function List:remove(value)
                 else
                     self.head = nil
                     self.tail = nil
+                end
+            elseif self.tail == node then
+                if node.prev then
+                    self.tail = node.prev
+                    self.tail.next = nil
+                end
+            else
+                if node.next then
+                    node.prev.next = node.next
+                    node.next.prev = node.prev
                 end
             end
             self.len = self.len - 1
@@ -82,11 +87,6 @@ function List:delete(index)
     local i = 0
     while node ~= nil do
         if i == index then
-            if node.prev and node.next then
-                node.prev.next = node.next
-                node.next.prev = node.prev
-            end
-
             if node == self.head then
                 if node.next then
                     self.head = node.next
@@ -95,12 +95,21 @@ function List:delete(index)
                     self.head = nil
                     self.tail = nil
                 end
+            elseif self.tail == node then
+                if node.prev then
+                    self.tail = node.prev
+                    self.tail.next = nil
+                end
+            else
+                if node.next then
+                    node.prev.next = node.next
+                    node.next.prev = node.prev
+                end
             end
             self.len = self.len - 1
-
             return true
         end
-
+        i = i + 1
         node = node.next
     end
     return false

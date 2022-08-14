@@ -54,8 +54,9 @@ end
 ---close terminal
 function Terminal:close()
     self.window:close()
-    a.nvim_buf_delete(self.bufnr, { force = true })
+
     vim.fn.jobstop(self.channel)
+    a.nvim_buf_delete(self.bufnr, { force = true })
 
     self.bufnr = nil
 end

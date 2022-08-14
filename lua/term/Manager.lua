@@ -32,6 +32,7 @@ function Manager:new_terminal()
     local opts = {
         shell = config.config().shell,
         on_exit = function(t)
+            self:set_current(0)
             t:close()
             self.terminals:remove(t)
         end,
