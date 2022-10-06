@@ -6,7 +6,7 @@ return {
     position = "center",
     border = {
         style = nil,
-        chars = { "┌", "─", "┐", "│", "┘", "─", "└", "│" },
+        chars = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
         hl = "TermBorder",
     },
 }
