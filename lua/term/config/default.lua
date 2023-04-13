@@ -4,8 +4,10 @@ return {
     height = 0.5,
     anchor = "NW",
     position = "center",
+    title = {
+        align = "center",
+    },
     border = {
-        style = nil,
         chars = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
         hl = "TermBorder",
     },
