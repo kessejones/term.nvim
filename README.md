@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-[Neovim 0.7](https://github.com/neovim/neovim/releases/tag/v0.7.0) or higher is required for `term.nvim` to work.
+[Neovim 0.9](https://github.com/neovim/neovim/releases/tag/v0.9.0) or higher is required for `term.nvim` to work.
 
 ### Installation
 
@@ -37,8 +37,10 @@ require("term").setup({
     height = 0.5,
     anchor = "NW",
     position = "center",
+    title = {
+        align = "center", -- left, center or right
+    },
     border = {
-        style = nil,
         chars = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
         hl = "TermBorder",
     },
