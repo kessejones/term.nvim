@@ -3,6 +3,7 @@ local Window = require("term.ui.Window")
 
 local a = vim.api
 local termopen = vim.fn.termopen
+local autocmd = a.nvim_create_autocmd
 
 ---@class Terminal
 ---@field channel number?
@@ -36,6 +37,13 @@ function Terminal.new(opts)
         bufnr = bufnr,
         window = window,
     }
+
+    autocmd("BufEnter", {
+        buffer = bufnr,
+        callback = function()
+            vim.cmd.startinsert { bang = true }
+        end,
+    })
 
     setmetatable(instance, { __index = Terminal })
 
@@ -72,8 +80,6 @@ function Terminal:show()
     if self.started == false then
         self:_spawn()
     end
-
-    vim.cmd("startinsert")
 end
 
 function Terminal:hide()

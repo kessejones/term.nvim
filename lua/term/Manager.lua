@@ -1,10 +1,12 @@
 local Terminal = require("term.Terminal")
 local List = require("term.List")
+local Panel = require("term.ui.Panel")
 local config = require("term.config")
 
 ---@class Manager
 ---@field terminals List
 ---@field current_index number
+---@field panel Panel
 local Manager = {}
 
 ---create a new manager
@@ -13,6 +15,7 @@ function Manager.new()
     local instance = {
         terminals = List.new(),
         current_index = 0,
+        panel = Panel.new(),
     }
 
     setmetatable(instance, { __index = Manager })
@@ -32,9 +35,14 @@ function Manager:new_terminal()
     local opts = {
         shell = config.config().shell,
         on_exit = function(t)
-            self:set_current(0)
             t:close()
             self.terminals:remove(t)
+            if self.terminals:length() > 0 then
+                self:switch(0)
+            else
+                self.panel:close()
+            end
+            self:_update_title()
         end,
     }
     local terminal = Terminal.new(opts)
@@ -49,10 +57,17 @@ function Manager:remove_terminal(idx)
     self.terminals:delete(idx)
 end
 
+---update title of window
+function Manager:_update_title()
+    self.panel:set_title(string.format("Terminal %d/%d", self.current_index + 1, self.terminals:length()))
+end
+
 ---set terminal index to current
 ---@param index number
 function Manager:set_current(index)
     self.current_index = index
+
+    self:_update_title()
 end
 
 ---toggle current terminal
@@ -64,6 +79,7 @@ function Manager:toggle()
         self:set_current(0)
     end
 
+    self.panel:toggle()
     terminal:toggle()
 end
 
@@ -83,12 +99,7 @@ function Manager:next()
         return
     end
 
-    local next_term = self.terminals:get(next_term_idx)
-    if next_term then
-        self:hide()
-        self:set_current(next_term_idx)
-        next_term:show()
-    end
+    self:switch(next_term_idx)
 end
 
 ---show previous terminal
@@ -97,21 +108,29 @@ function Manager:prev()
     if prev_term_idx < 0 then
         return
     end
-
-    local prev_term = self.terminals:get(prev_term_idx)
-    if prev_term then
-        self:hide()
-
-        self:set_current(prev_term_idx)
-        prev_term:show()
-    end
+    self:switch(prev_term_idx)
 end
 
 ---show current terminal
 function Manager:show()
     local cur = self:current()
     if cur then
+        self.panel:show()
         cur:show()
+    end
+end
+
+---switch to terminal by id
+function Manager:switch(to_idx)
+    local to_open = self.terminals:get(to_idx)
+    if to_open then
+        local cur = self:current()
+        if cur then
+            cur:hide()
+        end
+
+        to_open:show()
+        self:set_current(to_idx)
     end
 end
 
@@ -119,6 +138,7 @@ end
 function Manager:hide()
     local cur = self:current()
     if cur then
+        self.panel:close()
         cur:hide()
     end
 end

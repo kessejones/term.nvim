@@ -30,7 +30,7 @@ end
 
 ---get config for window
 ---@return WindowConfig
-function M.win_config()
+function M.panel_config()
     local columns = vim.o.columns
     local lines = vim.o.lines
 
@@ -54,13 +54,6 @@ function M.win_config()
         end
     end
 
-    local border
-    if not config.border.style then
-        border = vim.tbl_map(function(b)
-            return { b, config.border.hl }
-        end, config.border.chars)
-    end
-
     local win_opts = {
         relative = "editor",
         style = "minimal",
@@ -68,9 +61,27 @@ function M.win_config()
         col = col,
         width = width,
         height = height,
-        border = border,
+        border = nil,
         zindex = 300,
     }
+
+    return {
+        win_opts = win_opts,
+        border_opts = config.border,
+        title_opts = config.title,
+    }
+end
+
+---get config for window
+function M.win_config()
+    local opts = M.panel_config()
+    local win_opts = opts.win_opts
+
+    win_opts.width = win_opts.width - 2
+    win_opts.height = win_opts.height - 2
+    win_opts.row = win_opts.row + 1
+    win_opts.col = win_opts.col + 1
+    win_opts.zindex = 301
 
     return win_opts
 end
