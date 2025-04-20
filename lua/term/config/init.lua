@@ -61,7 +61,7 @@ function M.panel_config()
         col = col,
         width = width,
         height = height,
-        border = nil,
+        border = false,
         zindex = 300,
     }
 
